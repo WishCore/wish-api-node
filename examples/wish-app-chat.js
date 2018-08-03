@@ -1,4 +1,4 @@
-//var WishApp = require('wish-api').WishApp;
+//var WishApp = require('wish-core-api').WishApp;
 var WishApp = require('../index.js').WishApp;
 
 var white = '\u001b[37m';

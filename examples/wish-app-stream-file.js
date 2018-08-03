@@ -1,4 +1,4 @@
-//var WishApp = require('wish-api').WishApp;
+//var WishApp = require('wish-core-api').WishApp;
 var WishApp = require('../index.js').WishApp;
 var Client = require('wish-rpc').Client;
 var Server = require('wish-rpc').Server;

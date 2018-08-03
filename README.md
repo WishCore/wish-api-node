@@ -5,13 +5,13 @@ A native node.js plugin for building Wish applications. Currently working with L
 ## Install 
 
 ```sh
-npm install wish-api
+npm install wish-core-api
 ```
 
 ## Example
 
 ```js
-var WishApp = require('wish-api').WishApp;
+var WishApp = require('wish-core-api').WishApp;
 
 function App() {
     var app = new WishApp({ 
