@@ -1,0 +1,27 @@
+{
+  "name": "wish-api",
+  "version": "0.4.0-beta-4",
+  "description": "Wish API for node. Used for building Wish Apps.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "wish.cto.fi:/git/wish-api-node"
+  },
+  "keywords": [
+    "wish",
+    "api",
+    "security",
+    "peer-to-peer"
+  ],
+  "author": "André Kaustell <andre.kaustell@controlthings.fi>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bson-buffer": "1.0.2",
+    "nan": "2.8.0"
+  },
+  "devDependencies": {
+    "mkdirp": "0.5.1",
+    "mocha": "3.2.0",
+    "wish-rpc": "0.6.5"
+  }
+}
