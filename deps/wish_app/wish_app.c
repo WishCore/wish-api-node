@@ -254,9 +254,9 @@ void wish_app_on_ready(wish_app_t *app) {
     wish_app_request(app, &host_config_bs, host_config_cb, app);
 }
 
-static void send(void* ctx, bson* b) {
+static void send(void* ctx, uint8_t* buf, int len) {
     wish_app_t* app = ctx;
-    send_app_to_core(app->wsid, bson_data(b), bson_size(b));
+    send_app_to_core(app->wsid, buf, len);
 }
 
 /** 
@@ -569,7 +569,7 @@ rpc_client_req* wish_app_request(wish_app_t* app, bson* req, rpc_client_callback
     rpc_client_req* client_req = rpc_client_request(&app->rpc_client, req, cb, cb_ctx);
     
     if (client_req == NULL) { WISHDEBUG(LOG_CRITICAL, "wish_app_request failed"); }
-
+    
     send_app_to_core(app->wsid, bson_data(req), bson_size(req));
     
     return client_req;
