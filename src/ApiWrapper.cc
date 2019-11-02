@@ -3,7 +3,20 @@
 #include <iostream>
 
 using namespace std;
-using namespace Nan;
+
+using Nan::Get;
+using Nan::Callback;
+using Nan::MaybeLocal;
+using Nan::Utf8String;
+
+using v8::Local;
+using v8::Value;
+using v8::Object;
+using v8::String;
+using v8::Context;
+using v8::Isolate;
+using v8::Function;
+using v8::FunctionTemplate;
 
 Nan::Persistent<v8::Function> ApiWrapper::constructor;
 
@@ -23,44 +36,47 @@ ApiWrapper::addonDeleted() {
 }
 
 void
-ApiWrapper::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+ApiWrapper::New(const Nan::FunctionCallbackInfo<Value>& info) {
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    Isolate* isolate = info.GetIsolate();
     //info.GetReturnValue().Set(Nan::New("world").ToLocalChecked());
 
     if (info.IsConstructCall()) {
-
-        Callback *data_callback = new Callback(info[0].As<v8::Function>());
-        v8::Local<v8::Object> options = info[1].As<v8::Object>();
+        Callback *data_callback = new Callback(info[0].As<Function>());
+        Local<Object> options = info[1]->ToObject(context).ToLocalChecked();
         
         AddonWorker* worker = new AddonWorker(data_callback);
         
         if (options->IsObject()) {
-            v8::Local<v8::Value> _nodeName = options->Get(Nan::New<v8::String>("name").ToLocalChecked());
-            v8::Local<v8::Value> _protocol = options->Get(Nan::New<v8::String>("protocols").ToLocalChecked());
-            v8::Local<v8::Value> _coreIp = options->Get(Nan::New<v8::String>("coreIp").ToLocalChecked());
-            v8::Local<v8::Value> _corePort = options->Get(Nan::New<v8::String>("corePort").ToLocalChecked());
-            v8::Local<v8::Value> _apiType = options->Get(Nan::New<v8::String>("type").ToLocalChecked());
+            Local<Value> _nodeName = options->Get(Nan::New("name").ToLocalChecked());
+            Local<Value> _protocol = options->Get(Nan::New("protocols").ToLocalChecked());
+            Local<Value> _coreIp = options->Get(Nan::New("coreIp").ToLocalChecked());
+            Local<Value> _corePort = options->Get(Nan::New("corePort").ToLocalChecked());
+            Local<Value> _apiType = options->Get(Nan::New("type").ToLocalChecked());
 
             if (_nodeName->IsString()) {
-                worker->name = string(*v8::String::Utf8Value(_nodeName->ToString()));
+                Utf8String name(Nan::To<String>(_nodeName.As<String>()).ToLocalChecked());
+                worker->name = *name;
+                // worker->name = *Utf8String(_nodeName->ToString(context).ToLocalChecked());
             }
 
             if (_protocol->IsString()) {
-                worker->protocol = string(*v8::String::Utf8Value(_protocol->ToString()));
+                worker->protocol = *Utf8String(_protocol->ToString(context).ToLocalChecked());
             }
 
             if (_coreIp->IsString()) {
-                worker->coreIp = string(*v8::String::Utf8Value(_coreIp->ToString()));
+                worker->coreIp = *Utf8String(_coreIp->ToString(context).ToLocalChecked());
                 //cout << "4. a) ApiWrapper constructor: opts: " << coreIp << "\n";
             } else {
                 //cout << "4. b) ApiWrapper constructor: opts.core not string\n";
             }
 
             if (_corePort->IsNumber()) {
-                worker->corePort = (int) _corePort->NumberValue();
+                worker->corePort = _corePort->Int32Value(context).FromJust();
             }
 
             if (_apiType->IsNumber()) {
-                worker->apiType = (int) _apiType->NumberValue();
+                worker->apiType = (int) _apiType->Int32Value(context).FromJust();
             }
         }
 
@@ -75,13 +91,13 @@ ApiWrapper::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         // start the worker
         AsyncQueueWorker(apiWrapper->worker);
         //data_callback->Call(0, 0);
-        //printf("AsyncQueueWorker started\n");
     }
 }
 
 void
 ApiWrapper::request(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-    
+    Local<Context> context = Nan::GetCurrentContext();
+
     if (info.Length() != 2) {
         Nan::ThrowTypeError("Wrong number of arguments");
         return;
@@ -92,15 +108,15 @@ ApiWrapper::request(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         return;
     }
 
-    if (!info[1]->ToObject()->IsUint8Array()) {
+    if (!info[1]->ToObject(info.GetIsolate())->IsUint8Array()) {
         Nan::ThrowTypeError("Argument 2 is not a Buffer");
         return;
     }
     
-    v8::String::Utf8Value name(info[0]->ToString());
+    Utf8String name(Nan::To<String>(info[0]).ToLocalChecked());
     
-    uint8_t* buf = (uint8_t*) node::Buffer::Data(info[1]->ToObject());
-    int buf_len = node::Buffer::Length(info[1]->ToObject());
+    uint8_t* buf = (uint8_t*) node::Buffer::Data(Nan::To<Object>(info[1]).ToLocalChecked());
+    int buf_len = node::Buffer::Length(Nan::To<Object>(info[1]).ToLocalChecked());
     ApiWrapper* obj = Nan::ObjectWrap::Unwrap<ApiWrapper>(info.Holder());
      
     if ( obj->worker == NULL ) {
@@ -112,18 +128,21 @@ ApiWrapper::request(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 }
 
 void
-ApiWrapper::Init(v8::Local<v8::Object> exports) {
+ApiWrapper::Init(Local<v8::Object> exports) {
+    Local<v8::Context> context = exports->CreationContext();
+    // Local context = Nan::GetCurrentContext();
+    Nan::HandleScope scope;
     addon_init();
     
-    v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(ApiWrapper::New);
+    Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(ApiWrapper::New);
     tpl->SetClassName(Nan::New("WishApi").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(2);
 
     SetPrototypeMethod(tpl, "request", request);
 
-    constructor.Reset(tpl->GetFunction());
-    
-    exports->Set(Nan::New("WishApi").ToLocalChecked(), tpl->GetFunction());
+    constructor.Reset(tpl->GetFunction(context).ToLocalChecked());
+
+    exports->Set(Nan::New("WishApi").ToLocalChecked(), tpl->GetFunction(context).ToLocalChecked());
 }
 
 NODE_MODULE(WishApi, ApiWrapper::Init)
