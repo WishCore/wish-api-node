@@ -1,6 +1,6 @@
 {
-  "name": "wish-core-api",
-  "version": "0.4.0-beta-5",
+  "name": "wish-sdk",
+  "version": "0.4.0-beta-6",
   "description": "Wish API for node. Used for building Wish Apps.",
   "main": "index.js",
   "repository": {
@@ -13,7 +13,7 @@
     "security",
     "peer-to-peer"
   ],
-  "author": "André Kaustell <andre.kaustell@controlthings.fi>",
+  "author": "André Kaustell <andre.kaustell@wishtech.fi>",
   "license": "Apache-2.0",
   "dependencies": {
     "bindings": "1.5.0",
@@ -24,5 +24,8 @@
     "mkdirp": "0.5.1",
     "mocha": "3.2.0",
     "wish-rpc": "0.6.5"
+  },
+  "scripts": {
+    "install": "echo BuildDisabled"
   }
 }
