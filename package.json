@@ -1,5 +1,5 @@
 {
-  "name": "wish-sdk",
+  "name": "@wishcore/wish-sdk",
   "version": "0.4.0-beta-7",
   "description": "Wish API for node. Used for building Wish Apps.",
   "main": "index.js",
@@ -18,7 +18,7 @@
   "dependencies": {
     "bindings": "1.5.0",
     "bson-buffer": "1.0.2",
-    "nan": "2.14.0"
+    "nan": "2.14.2"
   },
   "devDependencies": {
     "mkdirp": "0.5.1",
