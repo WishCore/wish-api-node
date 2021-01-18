@@ -2,7 +2,7 @@
   "name": "@wishcore/wish-sdk",
   "version": "0.4.0-beta-7",
   "description": "Wish API for node. Used for building Wish Apps.",
-  "main": "index.js",
+  "main": "dist/src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/WishCore/wish-api-node.git"
@@ -20,12 +20,12 @@
     "bson-buffer": "1.0.2"
   },
   "devDependencies": {
-    "@types/jest": "26.0.20",
+    "@types/expect": "1.20.3",
+    "@types/joi": "14.3.4",
     "@types/mocha": "8.2.0",
     "@types/node": "14.14.21",
     "mkdirp": "0.5.1",
-    "mocha": "3.2.0",
-    "wish-rpc": "0.6.5"
+    "mocha": "3.2.0"
   },
   "scripts": {
     "test": "mocha --exit -r ts-node/register test/**/*.spec.ts",

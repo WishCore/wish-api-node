@@ -1,6 +1,6 @@
 # Wish Api
 
-A native node.js plugin for building Wish applications. Currently working with Linux x86_64 and nodejs v6.x only. To get it working you need to run a Wish Core on the same host.
+A library for building Wish applications.
 
 ## Install 
 
