@@ -16,16 +16,20 @@
   "author": "André Kaustell <andre.kaustell@wishtech.fi>",
   "license": "Apache-2.0",
   "dependencies": {
-    "bindings": "1.5.0",
-    "bson-buffer": "1.0.2",
-    "nan": "2.14.2"
+    "@wishcore/wish-rpc": "0.6.8",
+    "bson-buffer": "1.0.2"
   },
   "devDependencies": {
+    "@types/jest": "26.0.20",
+    "@types/mocha": "8.2.0",
+    "@types/node": "14.14.21",
     "mkdirp": "0.5.1",
     "mocha": "3.2.0",
     "wish-rpc": "0.6.5"
   },
   "scripts": {
-    "install": "echo BuildDisabled"
+    "test": "mocha --exit -r ts-node/register test/**/*.spec.ts",
+    "test-only": "mocha --exit -r ts-node/register",
+    "coverage": "nyc mocha --exit -r ts-node/register -r source-map-support/register test/**/*.spec.ts"
   }
 }
