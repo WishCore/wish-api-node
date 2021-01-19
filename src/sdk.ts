@@ -30,7 +30,7 @@ export class App extends EventEmitter {
 
         this.port = opts.corePort;
         this.name = opts.name;
-        this.protocols = opts.protocols;
+        this.protocols = opts.protocols || [];
 
         this.connect();
     }
@@ -112,7 +112,7 @@ export class App extends EventEmitter {
                     if (this.state === 'connecting') {
                         this.tcp.write(this.createFrame({ ready: true }));
                         this.state = 'connected';
-                        this.emit('ready');
+                        this.emit('ready', true);
                     }
                     return;
                 }
