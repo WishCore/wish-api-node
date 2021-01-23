@@ -68,12 +68,15 @@ export class App extends EventEmitter {
 
         this.requestMap[++this.id] = (msg: any) => { cb(!!msg.err, msg.data); };
         this.tcp.write(this.createFrame({ op, args, id: this.id }));
+
         return this.id;
     }
 
-    requestBare(op: string, args: any[], cb) {
+    requestBare(op: string, args: any[], cb): number {
         this.requestMap[++this.id] = cb;
         this.tcp.write(this.createFrame({ op, args, id: this.id }));
+
+        return this.id;
     }
 
     async connect() {
@@ -94,6 +97,11 @@ export class App extends EventEmitter {
         this.tcp.on('close', function() {
             console.log('Connection closed');
         });
+    }
+
+    /** Cancel and/or terminate request by id */
+    cancel(requestId: number): void {
+        delete this.requestMap[requestId];
     }
 
     private async waitFrame() {

@@ -8,7 +8,7 @@ export class Peer {
     protocol: string;
     online: boolean;
 
-    private constructor() {
+    constructor() {
 
     }
 

@@ -4,13 +4,27 @@ import { Client, Server } from '@wishcore/wish-rpc';
 
 const BSON = new (require('bson-buffer'))();
 
-interface Handler {
+export interface Protocol {
     online?: (peer: Peer, client: Client) => void;
     offline?: (peer: Peer) => void;
-    handler: { [handler: string]: any };
+    /**
+     * Optional handler
+     *
+     * Add using:
+     *
+     * ```typescript
+     * app.server.insertMethods({
+     *   _get: {},
+     *   get: async (req, res, context) {
+     *     res.send('response');
+     *   }
+     * })
+     * ```
+     */
+    handler?: { [handler: string]: any };
 }
 
-interface ProtocolMap {
+export interface ProtocolMap {
     [protocol: string]: {
         online: any;
         offline: any;
@@ -18,28 +32,29 @@ interface ProtocolMap {
     };
 }
 
-class RpcApp {
+export class RpcApp {
     clients: { [peer: string]: any } = {};
     protocols: ProtocolMap = {};
     connections: { [key: string]: number } = {};
 
     wish: App;
+    server: Server;
 
     constructor(private opts: {
         name: string,
-        corePort: number,
+        corePort?: number,
         protocols: {
-            [protocol: string]: Handler
+            [protocol: string]: Protocol
         }
     }) {
-        Object.entries(opts.protocols).forEach(([protocol, handler]) => {
-            const server = new Server();
-            server.insertMethods(handler.handler);
-            this.protocols[protocol] = { server, online: handler.online, offline: handler.offline };
+        Object.entries(opts.protocols).forEach(([name, protocol]) => {
+            this.server = new Server();
+            this.server.insertMethods(protocol.handler || {});
+            this.protocols[name] = { server: this.server, online: protocol.online, offline: protocol.offline };
         });
 
         const app = new App({
-            corePort: opts.corePort,
+            corePort: opts.corePort || 9094,
             name: opts.name,
             protocols: Object.keys(opts.protocols),
         });
