@@ -26,14 +26,14 @@ export interface Protocol {
 
 export interface ProtocolMap {
     [protocol: string]: {
-        online: any;
-        offline: any;
+        online: (peer: Peer, client: Client) => void;
+        offline: (peer: Peer) => void;
         server: Server;
     };
 }
 
 export class RpcApp {
-    clients: { [peer: string]: any } = {};
+    clients: { [peer: string]: Client } = {};
     protocols: ProtocolMap = {};
     connections: { [key: string]: number } = {};
 
