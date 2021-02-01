@@ -16,7 +16,7 @@
   "author": "André Kaustell <andre.kaustell@wishtech.fi>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@wishcore/wish-rpc": "0.6.8",
+    "@wishcore/wish-rpc": "0.6.10",
     "bson-buffer": "1.0.2"
   },
   "devDependencies": {

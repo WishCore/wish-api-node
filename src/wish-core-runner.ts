@@ -1,4 +1,19 @@
-import { spawn } from "child_process";
+import { ChildProcess, spawn } from 'child_process';
+
+export interface WishCoreRunnerOpts {
+    /** Listen for wish connections from other nodes */
+    nodePort?: number;
+    /** Port for listening for applications */
+    appPort?: number;
+    /**
+     * Working directory for wish-core
+     *
+     * Saves and reads wish.conf and wish identity db file.
+     *
+     * Defaults to `./env`
+     */
+    cwd?: string;
+}
 
 /**
  * Run a pre-built wish-core
@@ -12,36 +27,51 @@ export class WishCoreRunner {
 
     private nodePort = process.env.NODE_PORT ? parseInt(process.env.NODE_PORT, 10) : 37008;
     private appPort = process.env.APP_PORT ? parseInt(process.env.APP_PORT, 10) : 9094;
+    private cwd = './env';
+
+    private binary: string;
+    private child: ChildProcess;
+
+    /** Stop `wish-core` */
+    kill() {
+        this.child.kill();
+    }
+
+    private constructor(opts: WishCoreRunnerOpts) {
+        Object.apply(this, opts);
+    }
 
     /**
-     * Start up Wish core.
+     * Start up `wish-core` and returns `WishCoreRunner` instance
      *
-     * Looks for environment variable WISH pointing at a binary to run or falls
-     * back to using bundled binary from wish-sdk.
+     * Waits for the child process to start before returning. Restarts core if killed or crashes.
      */
-    start(): Promise<any> {
-        return new Promise<void>(async (resolve, reject) => {
-            try {
-                // fs.unlinkSync('./env/wish_hostid.raw');
-                // fs.unlinkSync('./env/wish_id_db.bson');
-            } catch (e) {}
+    static async start(opts: WishCoreRunnerOpts = {}): Promise<WishCoreRunner> {
+        try {
+            // fs.unlinkSync('./env/wish_hostid.raw');
+            // fs.unlinkSync('./env/wish_id_db.bson');
+        } catch (e) {}
 
-            const sdkWishBinary = __dirname + `/../bin/wish-core-${this.arch}-${this.platform}`;
+        const instance = new WishCoreRunner(opts)
 
-            await this.spawn();
-            resolve();
-        });
+        instance.binary = __dirname + `/../../bin/wish-core-${instance.arch}-${instance.platform}`;
+
+        await instance.spawn();
+
+        return instance;
     }
 
     private spawn(): Promise<void> {
         return new Promise((resolve, reject) => {
-            console.log('Starting Wish Core.');
+            console.log('Starting Wish Core:', this.binary);
             // const core = child.spawn('./wish-core', ['-p 38001', '-a 9095', '-r', '-s'], { cwd: './env', stdio: 'inherit' });
             const core = spawn(
-                './wish-core',
+                this.binary,
                 ['-p ' + this.nodePort, '-a ' + this.appPort, '-s'],
-                { cwd: './env', stdio: 'inherit' }
+                { cwd: this.cwd, stdio: 'inherit' }
             );
+
+            this.child = core;
 
             process.on('exit', () => core.kill());
 
