@@ -38,7 +38,7 @@ export class WishCoreRunner {
     }
 
     private constructor(opts: WishCoreRunnerOpts) {
-        Object.apply(this, opts);
+        Object.assign(this, opts);
     }
 
     /**
