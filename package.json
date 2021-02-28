@@ -1,6 +1,6 @@
 {
   "name": "@wishcore/wish-sdk",
-  "version": "0.4.0-beta-12",
+  "version": "0.4.0-beta-13",
   "description": "Wish API for node. Used for building Wish Apps.",
   "main": "dist/src/index.js",
   "repository": {
