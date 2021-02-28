@@ -36,7 +36,7 @@ export class App extends EventEmitter {
     }
 
     async send(peer: Peer, frame: Buffer) {
-        this.tcp.write(this.createFrame({ op: 'services.send', args: [peer, frame] }));
+        return this.requestAsync('services.send', [peer, frame]);
     }
 
     requestAsync(op: string, args: any[]): Promise<any> {
