@@ -13,6 +13,7 @@ export interface WishCoreRunnerOpts {
      * Defaults to `./env`
      */
     cwd?: string;
+    disableLocalDiscovery?: boolean
 }
 
 /**
@@ -28,6 +29,7 @@ export class WishCoreRunner {
     private nodePort = process.env.NODE_PORT ? parseInt(process.env.NODE_PORT, 10) : 37008;
     private appPort = process.env.APP_PORT ? parseInt(process.env.APP_PORT, 10) : 9094;
     private cwd = './env';
+    private disableLocalDiscovery = false;
 
     private binary: string;
     private child: ChildProcess;
@@ -67,7 +69,7 @@ export class WishCoreRunner {
             // const core = child.spawn('./wish-core', ['-p 38001', '-a 9095', '-r', '-s'], { cwd: './env', stdio: 'inherit' });
             const core = spawn(
                 this.binary,
-                ['-p ' + this.nodePort, '-a ' + this.appPort, '-s'],
+                ['-p ' + this.nodePort, '-a ' + this.appPort, '-s', ...this.disableLocalDiscovery ? ['-l', '-b'] : []],
                 { cwd: this.cwd, stdio: 'inherit' }
             );
 
