@@ -74,9 +74,7 @@ export class RpcApp {
                 protocol.server.parse(
                     { id: msg.id, op: msg.op, args: msg.args },
                     (msg) => {
-                        app.request('services.send', [peer, BSON.serialize(msg)], (err, data) => {
-                            // send or not?
-                        });
+                        return app.requestAsync('services.send', [peer, BSON.serialize(msg)]);
                     },
                     { peer },
                     this.connections[peer.toUrl()]
