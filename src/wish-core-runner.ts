@@ -1,4 +1,5 @@
 import { ChildProcess, spawn } from 'child_process';
+import { join } from 'path';
 
 export interface WishCoreRunnerOpts {
     /** Listen for wish connections from other nodes */
@@ -56,7 +57,15 @@ export class WishCoreRunner {
 
         const instance = new WishCoreRunner(opts)
 
-        instance.binary = __dirname + `/../../bin/wish-core-${instance.arch}-${instance.platform}`;
+        instance.binary = join(__dirname + `/../../bin/wish-core-${instance.arch}-${instance.platform}`);
+
+        if (
+            instance.arch === 'arm64' &&
+            instance.platform === 'darwin'
+        ) {
+            // exception for m1 macs until native build is available
+            instance.arch = 'x64';
+        }
 
         await instance.spawn();
 
