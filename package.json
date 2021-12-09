@@ -1,6 +1,6 @@
 {
   "name": "@wishcore/wish-sdk",
-  "version": "0.4.0-beta-15",
+  "version": "0.4.0-beta-16",
   "description": "Wish API for node. Used for building Wish Apps.",
   "main": "dist/src/index.js",
   "repository": {
@@ -25,11 +25,13 @@
     "@types/mocha": "8.2.0",
     "@types/node": "14.14.21",
     "mkdirp": "0.5.1",
-    "mocha": "3.2.0"
+    "mocha": "3.2.0",
+    "typescript": "4.5.2"
   },
   "scripts": {
     "test": "mocha --exit -r ts-node/register test/**/*.spec.ts",
     "test-only": "mocha --exit -r ts-node/register",
-    "coverage": "nyc mocha --exit -r ts-node/register -r source-map-support/register test/**/*.spec.ts"
+    "coverage": "nyc mocha --exit -r ts-node/register -r source-map-support/register test/**/*.spec.ts",
+    "prepare": "tsc"
   }
 }
