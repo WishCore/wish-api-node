@@ -1,12 +1,17 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 import { clear } from './deps/util';
 var inspect = require('util').inspect;
 
 describe('Wish Identity', function () {
+    let env: DevelopmentEnvironment;
     var app;
-    
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });   
     before(function (done) {
-        app = new WishApp({ name: 'Generic UI', corePort: 9095 });
+        app = new WishApp({ name: 'Generic UI 2', corePort: 9095 });
 
         setTimeout(function() {
             app.request('ready', [], function(err, ready) {

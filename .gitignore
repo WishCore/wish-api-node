@@ -6,4 +6,5 @@ build
 /npm-debug.log
 /*.tgz
 /tools/env
+/test/env
 /package-lock.json

@@ -1,9 +1,15 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 var inspect = require('util').inspect;
 
 describe('Wish Services', function () {
+    let env: DevelopmentEnvironment;
     var app;
     var opts = { name: 'Babbel', protocols: ['chat'], corePort: 9095 };
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
 
     before(function (done) {
         app = new WishApp(opts);

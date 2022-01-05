@@ -1,7 +1,13 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 
-describe('Multi Addon', function () {
+xdescribe('Multi Addon', function () {
+    let env: DevelopmentEnvironment;
     var list = [];
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
 
     it('should setup multiple Wish Addon instances', function(done) {
         this.timeout(5000);

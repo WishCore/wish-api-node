@@ -1,4 +1,5 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 import { clear, ensureIdentity } from './deps/util';
 var bson = require('bson-buffer');
 var BSON = new bson();
@@ -34,8 +35,13 @@ describe('Wish core multiple transports, friend requests, update transports', fu
     
     return;
     
+    let env: DevelopmentEnvironment;
     var aliceRelayList;
     var newRelayServer = '127.0.0.1:40000';
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
     
     before(function(done) {
         console.log('before 1');

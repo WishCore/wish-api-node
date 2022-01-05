@@ -1,4 +1,5 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 import { clear, ensureIdentity } from './deps/util';
 
 var name1 = 'Alice';
@@ -19,9 +20,14 @@ var bobWldEntry;
  */
 
 describe('Wish test ban contact', function () {
+    let env: DevelopmentEnvironment;
     var aliceRelayList;
     var newRelayServer = '127.0.0.1:40000';
-    
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
+
     before(function(done) {
         console.log('before 1');
          aliceApp = new WishApp({ name: 'app1', protocols: ['test'], corePort: 9095 }); // , protocols: [] });

@@ -57,15 +57,9 @@ export class WishCoreRunner {
 
         const instance = new WishCoreRunner(opts)
 
-        instance.binary = join(__dirname + `/../../bin/wish-core-${instance.arch}-${instance.platform}`);
+        instance.binary = join(__dirname + `/../bin/wish-core-${instance.arch}-${instance.platform}`);
 
-        if (
-            instance.arch === 'arm64' &&
-            instance.platform === 'darwin'
-        ) {
-            // exception for m1 macs until native build is available
-            instance.arch = 'x64';
-        }
+        console.log('bin:', instance.binary);
 
         await instance.spawn();
 

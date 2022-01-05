@@ -1,5 +1,6 @@
 import { App as WishApp } from '../src/sdk';
 import { clear, ensureIdentity } from './deps/util';
+import { DevelopmentEnvironment } from './deps/development-environment';
 
 const BSON = new (require('bson-buffer'))();
 
@@ -8,6 +9,7 @@ var inspect = require('util').inspect;
 // run ../node_modules/mocha/bin/mocha test/wish-friends.js
 
 describe('Wish Friends', function () {
+    let env: DevelopmentEnvironment;
     var app1;
     var app2;
     var identity1;
@@ -16,6 +18,10 @@ describe('Wish Friends', function () {
     var identity2;
     var bobWldEntry;
     
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
+
     before(function (done) {
         app1 = new WishApp({ name: 'AliceFriendManager', corePort: 9095 });
 
@@ -28,12 +34,12 @@ describe('Wish Friends', function () {
         app1.request('signals', [], function(err, data) {
             //console.log("App1: Got signal", data);
         });
-        
+
         done();
     });
 
     before('should get bob', function(done) {
-        app2 = new WishApp({ name: 'BobsFriendManager', corePort: 9096 });
+        app2 = new WishApp({ name: 'BobsFriendManager2', corePort: 9096 });
 
         app2.on('ready', () => {
             done();
@@ -46,14 +52,14 @@ describe('Wish Friends', function () {
         app2.request('signals', [], function(err, data) {
             //console.log("App2: Got signal", data);
             if (data[0] && data[0] === 'friendRequest') {
-                console.log("Friend request signal");
+                // console.log("Friend request signal");
                 app2.request('identity.friendRequestList', [], function(err, data) {
                     for (var i in data) {
                         if( Buffer.compare(data[i].luid, identity2.uid) === 0 
                                 && Buffer.compare(data[i].ruid, identity1.uid) === 0 ) 
                         {
                             app2.request('identity.friendRequestAccept', [data[i].luid, data[i].ruid], function(err, data) {
-                                console.log("Accepted friend request from Alice:", err, data);
+                                // console.log("Accepted friend request from Alice:", err, data);
                             });
                             
                             break;
@@ -78,7 +84,7 @@ describe('Wish Friends', function () {
             });
         });
     });
-    
+
     before('should ensure identity2 app2', function(done) {
         clear(app2, function(err) {
             if (err) { done(new Error('util.js: Could not clear core.')); }
@@ -95,13 +101,13 @@ describe('Wish Friends', function () {
     
     it('should find Alice in wld', function(done) {
         this.timeout(35000);
-        
+
         function poll() {
             app1.request('wld.list', [], function(err, data) {
                 if (err) { return done(new Error(inspect(data))); }
 
                 //console.log("Bobs wld", err, data);
-                
+
                 for (var i in data) {
                     if ( Buffer.compare(data[i].ruid, identity2.uid) === 0) {
                         bobWldEntry = data[i];
@@ -109,7 +115,7 @@ describe('Wish Friends', function () {
                         return;
                     }
                 }
-                
+
                 setTimeout(poll, 1000);
             });
         };
@@ -118,13 +124,13 @@ describe('Wish Friends', function () {
     });
     
     it('should add Bob as a friend to Alice', function(done) {
-        console.log("Friend request params:", [identity1.uid, bobWldEntry.ruid, bobWldEntry.rhid]);      
-        
+        // console.log("Friend request params:", [identity1.uid, bobWldEntry.ruid, bobWldEntry.rhid]);      
+
         app1.request('wld.friendRequest', [identity1.uid, bobWldEntry.ruid, bobWldEntry.rhid], function(err, data) {
             if (err) { return done(new Error(inspect(data))); }
-            
-            console.log("Bobs cert", err, data);
-            
+
+            // console.log("Bobs cert", err, data);
+
             setTimeout(function() {
                 app1.request('identity.list', [], function(err, data) {
                     if (err) { return done(new Error(inspect(data))); }
@@ -179,12 +185,10 @@ describe('Wish Friends', function () {
         //console.log("Bob's uid", identity2);
         app1.request('identity.get', [identity2.uid], function(err, data) {
             if (err) { return done(new Error("Error while doing identity.get from Alice " + err + " " + inspect(data))); }
-            
+
             //console.log("Bob's identity on Alice", data);
-            
+
             verifyTransport(data, done);
-            
-            
         })
     });
     
@@ -192,12 +196,10 @@ describe('Wish Friends', function () {
         //console.log("Alice's uid", identity1);
         app2.request('identity.get', [identity1.uid], function(err, data) {
             if (err) { return done(new Error("Error while doing identity.get from Bob " + err + " " + inspect(data))); }
-            
+
             //console.log("Alice's identity on Bob", data);
-            
+
             verifyTransport(data, done);
-            
-            
         })
     });
 });
@@ -223,8 +225,6 @@ function verifyTransport(data, done) {
             } else {
                 return done(new Error("Transport url is not string in identity.get(Bob.uid) from Alice"));
             }
-
-
         } else {
             return done(new Error("There is no transports array in identity.get(Bob.uid) from Alice"));
         }

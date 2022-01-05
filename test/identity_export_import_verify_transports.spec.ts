@@ -1,4 +1,5 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 import { clear, ensureIdentity } from './deps/util';
 var bson = require('bson-buffer');
 var BSON = new bson();
@@ -23,7 +24,7 @@ var bobWldEntry;
  */
 
 describe('Wish core import export identity with many transports', function () {
-    
+    let env: DevelopmentEnvironment;
     //
     // This test is disabled because wish core has a bug and fails when it cannot connect to the relay server    
     //
@@ -36,7 +37,11 @@ describe('Wish core import export identity with many transports', function () {
     
     var aliceRelayList;
     var newRelayServer = '127.0.0.1:40000';
-    
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
+
     before(function(done) {
         console.log('before 1');
          aliceApp = new WishApp({ name: 'app1', protocols: ['test'], corePort: 9095 }); // , protocols: [] });

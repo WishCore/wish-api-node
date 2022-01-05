@@ -1,11 +1,16 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 var inspect = require('util').inspect;
 
 describe('Wish Directory', function () {
+    let env: DevelopmentEnvironment;
     var app;
 
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
     before(function (done) {
-        app = new WishApp({ name: 'Generic UI', corePort: 9095 });
+        app = new WishApp({ name: 'Generic UI 1', corePort: 9095 });
 
         app.on('ready', function() {
             done();

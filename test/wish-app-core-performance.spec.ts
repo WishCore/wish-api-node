@@ -1,4 +1,5 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 import { clear, ensureIdentity } from './deps/util';
 
 const BSON = new (require('bson-buffer'))();
@@ -7,9 +8,15 @@ var app1;
 
 var identity1;
 
-describe('WishApp Peers', function () {
-    before('setup PeerTester1', function(done) {
-        app1 = new WishApp({ name: 'PeerTester1', protocols: ['test'], corePort: 9095 }); // , protocols: [] });
+xdescribe('WishApp Peers', function () {
+    let env: DevelopmentEnvironment;
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
+
+    before('setup PeerTester3', function(done) {
+        app1 = new WishApp({ name: 'PeerTester3', protocols: ['test'], corePort: 9095 }); // , protocols: [] });
 
         app1.once('ready', function() {
             done();

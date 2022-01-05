@@ -1,14 +1,20 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 import { ensureIdentity } from './deps/util';
 var inspect = require('util').inspect;
 
 describe('Wish Local Discovery', function () {
+    let env: DevelopmentEnvironment;
+
     var app;
     var name = 'Alice';
     var aliceIdentity;
-    
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
     before(function (done) {
-        app = new WishApp({ name: 'Generic UI', corePort: 9095 });
+        app = new WishApp({ name: ' 3', corePort: 9095 });
 
         app.on('ready', () => {
             ensureIdentity(app, name, function(err, identity) {

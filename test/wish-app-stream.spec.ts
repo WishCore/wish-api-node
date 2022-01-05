@@ -1,4 +1,5 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 import { clear, ensureIdentity } from './deps/util';
 var inspect = require('util').inspect;
 
@@ -12,16 +13,22 @@ var identity1;
 var identity2;
 
 describe('WishApp Peers', function () {
-    before('setup PeerTester1', function(done) {
-        app1 = new WishApp({ name: 'PeerTester1', protocols: ['test'], corePort: 9095 }); // , protocols: [] });
+    let env: DevelopmentEnvironment;
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
+
+    before('setup PeerTester6', function(done) {
+        app1 = new WishApp({ name: 'PeerTester6', protocols: ['test'], corePort: 9095 }); // , protocols: [] });
 
         app1.once('ready', function() {
             done();
         });
     });
     
-    before('setup PeerTester2', function(done) {
-        app2 = new WishApp({ name: 'PeerTester2', protocols: ['test'], corePort: 9096 }); // , protocols: [] });
+    before('setup PeerTester7', function(done) {
+        app2 = new WishApp({ name: 'PeerTester7', protocols: ['test'], corePort: 9096 }); // , protocols: [] });
 
         app2.once('ready', function() {
             done();

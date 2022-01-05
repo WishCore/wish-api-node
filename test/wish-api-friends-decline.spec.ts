@@ -1,4 +1,5 @@
 import { App as WishApp } from '../src/sdk';
+import { DevelopmentEnvironment } from './deps/development-environment';
 import { clear, ensureIdentity } from './deps/util';
 
 const BSON = new (require('bson-buffer'))();
@@ -8,6 +9,8 @@ var inspect = require('util').inspect;
 // run ../node_modules/mocha/bin/mocha test/wish-friends.js
 
 describe('Wish Friends', function () {
+    let env: DevelopmentEnvironment;
+
     var app;
     var app1;
     var app2;
@@ -17,7 +20,11 @@ describe('Wish Friends', function () {
     var bobAlias = 'Bob';
     var bobIdentity;
     var bobWldEntry;
-    
+
+    before(async function() {
+        env = await DevelopmentEnvironment.getInstance();
+    });
+
     before('setup manager', function (done) {
         app = new WishApp({ name: 'FriendManager', corePort: 9095 });
 
@@ -28,7 +35,7 @@ describe('Wish Friends', function () {
     });
 
     it('should get bob', function(done) {
-        bob = new WishApp({ name: 'BobsFriendManager', corePort: 9096 });
+        bob = new WishApp({ name: 'BobsFriendManager1', corePort: 9096 });
 
         bob.on('ready', function(err, data) {
             done();
