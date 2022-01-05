@@ -1,4 +1,5 @@
 import { ChildProcess, spawn } from 'child_process';
+import { existsSync } from 'fs';
 import { join } from 'path';
 
 export interface WishCoreRunnerOpts {
@@ -55,9 +56,17 @@ export class WishCoreRunner {
             // fs.unlinkSync('./env/wish_id_db.bson');
         } catch (e) {}
 
-        const instance = new WishCoreRunner(opts)
+        const instance = new WishCoreRunner(opts);
 
-        instance.binary = join(__dirname + `/../bin/wish-core-${instance.arch}-${instance.platform}`);
+        const path = join(__dirname, `/../../bin/wish-core-${instance.arch}-${instance.platform}`);
+        const alt = join(__dirname, `/../bin/wish-core-${instance.arch}-${instance.platform}`);
+
+        if (existsSync(path)) {
+            instance.binary = path;
+        } else {
+            instance.binary = alt;
+        }
+
 
         console.log('bin:', instance.binary);
 
