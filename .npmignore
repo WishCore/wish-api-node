@@ -10,9 +10,11 @@
 /doc
 /src
 /deps
+/dist/test
 /test
 /tools
 /.npmignore
 /release.sh
 /sandbox.bin
 /Doxyfile
+/.vscode

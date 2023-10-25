@@ -1,6 +1,10 @@
 /nbproject
+/.vscode
 /node_modules
 build
+/dist
 /npm-debug.log
 /*.tgz
 /tools/env
+/test/env
+/package-lock.json

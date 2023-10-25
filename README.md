@@ -1,43 +1,39 @@
 # Wish Api
 
-A native node.js plugin for building Wish applications. Currently working with Linux x86_64 and nodejs v6.x only. To get it working you need to run a Wish Core on the same host.
+A library for building Wish applications.
 
 ## Install 
 
 ```sh
-npm install wish-core-api
+npm install @wishcore/wish-sdk
 ```
 
 ## Example
 
 ```js
-var WishApp = require('wish-core-api').WishApp;
+const { App } = require('@wishcore/wish-sdk');
 
-function App() {
-    var app = new WishApp({ 
-        name: process.env.SID || 'MyApp',
-        corePort: parseInt(process.env.CORE) || 9094,
-        protocols: ['test'] });
+const app = new App({
+    name: process.env.SID || 'MyApp',
+    corePort: parseInt(process.env.CORE, 10) || 9094,
+    protocols: ['chat'] });
 
-    app.on('ready', (ready) => {
-        app.request('identity.create', ['John Doe'], (err, data) => {
-            if (err && data.code === 304) { return console.log('Using existing identity'); }
-            console.log('Identity created:', err, data);
-        });
+app.on('ready', (ready) => {
+    app.request('identity.create', ['John Doe'], (err, data) => {
+        if (err && data.code === 304) { return console.log('Using existing identity'); }
+        console.log('Identity created:', err, data);
     });
+});
 
-    app.on('online', (peer) => {
-        app.request('services.send', [peer, new Buffer('Permissionless innovation!')], (err, data) => {
-            // sent or not?
-        });
+app.on('online', (peer) => {
+    app.request('services.send', [peer, Buffer.from('Permissionless innovation!')], (err, data) => {
+        // sent or not?
     });
+});
 
-    app.on('frame', (peer, data) => {
-        app.request('identity.get', [peer.ruid], function(err, user) {
-            console.log(user.alias, 'says:', data.toString());
-        });
+app.on('frame', (peer, data) => {
+    app.request('identity.get', [peer.ruid], function(err, user) {
+        console.log(user.alias, 'says:', data.toString());
     });
-}
-
-var app = new App();
+});
 ```

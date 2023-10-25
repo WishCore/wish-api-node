@@ -1,6 +1,0 @@
-[submodule "deps/mbedtls"]
-	path = deps/mbedtls
-	url = https://github.com/ARMmbed/mbedtls.git
-[submodule "deps/wish-rpc-c99"]
-	path = deps/wish-rpc-c99
-	url = https://github.com/WishCore/wish-rpc-c99.git
