@@ -7,4 +7,3 @@ build
 /*.tgz
 /tools/env
 /test/env
-/package-lock.json
